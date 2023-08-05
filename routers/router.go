@@ -13,8 +13,8 @@ func NewRouter(tagsController *controller.TagsController) *gin.Engine {
 	router.GET("", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, "welcome home")
 	})
-
-	tagsRouter := router.Group("/tags")
+	baseRouter := router.Group("/api")
+	tagsRouter := baseRouter.Group("/tags")
 	tagsRouter.GET("", tagsController.FindAll)
 	tagsRouter.GET("/:tagId", tagsController.FindById)
 	tagsRouter.POST("/", tagsController.Create)
