@@ -1,19 +1,39 @@
 package main
 
 import (
+	"go-crud-gin/config"
+	"go-crud-gin/controller"
 	"go-crud-gin/helper"
+	"go-crud-gin/model"
+	"go-crud-gin/repository"
+	"go-crud-gin/routers"
+	"go-crud-gin/service"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog/log"
 )
 
 func main() {
 	log.Info().Msg("Started server!")
-	routes := gin.Default()
-	routes.GET("", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, "welcome home")
-	})
+
+	// DATABASE
+	db := config.DatabaseConnection()
+	validate := validator.New()
+	db.Table("tags").AutoMigrate(&model.Tags{})
+
+	// RESPOSITORY
+	tagsRepository := repository.NewTagsRepositoryImpl(db)
+
+	// service
+	tagsService := service.NewTagsServiceImpl(tagsRepository, validate)
+
+	// controller
+	tagsController := controller.NewTagsController(tagsService)
+
+	// router
+	routes := routers.NewRouter(tagsController)
+
 	server := http.Server{
 		Addr:    ":8888",
 		Handler: routes,

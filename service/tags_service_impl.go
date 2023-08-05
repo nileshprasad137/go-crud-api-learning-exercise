@@ -62,7 +62,7 @@ func (t *TagsServiceImpl) Update(tags request.UpdateTagsRequest) {
 	t.TagsRepository.Update(tagData)
 }
 
-func newTagsServiceImpl(tagRepository repository.TagsRepository, validate *validator.Validate) TagsService {
+func NewTagsServiceImpl(tagRepository repository.TagsRepository, validate *validator.Validate) TagsService {
 	return &TagsServiceImpl{
 		TagsRepository: tagRepository,
 		Validate:       validate,
